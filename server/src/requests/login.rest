@@ -1,0 +1,19 @@
+@base_url = http://localhost:3001
+
+### Login request
+POST {{base_url}}/api/auth
+Content-Type: application/json
+
+{
+  "email": "newuser35@test.com",
+  "password": "secretuser"
+}
+
+
+### Refresh token request
+POST {{base_url}}/api/auth/refresh
+Content-Type: application/json
+
+### Logout request
+POST {{base_url}}/api/auth/logout
+Content-Type: application/json

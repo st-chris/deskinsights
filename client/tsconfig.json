@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "paths": { "@/*": ["./src/*"], "@backend/*": ["../server/src/*"], },
+    "types": ["vite/client", "vitest/globals", "react"]
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}

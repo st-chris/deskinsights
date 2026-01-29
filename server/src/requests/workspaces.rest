@@ -1,0 +1,36 @@
+@base_url = http://localhost:3001
+
+### Get all workspaces for user
+GET {{base_url}}/api/workspaces
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+### Create a new workspace
+POST {{base_url}}/api/workspaces
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+{
+  "name": "Workspace 1",
+  "description": "This is my first workspace"
+}
+
+### Get workspace by ID
+GET {{base_url}}/api/workspaces/695cfcb06aa92b66cd6748a3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+### Update workspace
+PUT {{base_url}}/api/workspaces/695cfcb06aa92b66cd6748a3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+{
+  "name": "Updated Workspace 1 Name",
+  "description": "Updated description for my workspace"
+}
+
+### Delete workspace
+DELETE {{base_url}}/api/workspaces/695cfcb06aa92b66cd6748a3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo

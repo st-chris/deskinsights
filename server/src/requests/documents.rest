@@ -1,0 +1,47 @@
+@base_url = http://localhost:3001
+
+### Create a new document
+POST {{base_url}}/api/documents
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+{
+  "title": "Document 3",
+  "content": "<p>This is the content of my second document.</p>",
+  "workspaceId": "695d0560415cc5ab22b30287"
+}
+
+### Get all documents in a workspace
+GET {{base_url}}/api/documents/workspace/695cfcb06aa92b66cd6748a3
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+### Get document by ID
+GET {{base_url}}/api/documents/695d059c415cc5ab22b30291
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+### Update document
+PUT {{base_url}}/api/documents/695d059c415cc5ab22b30291
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+{
+  "title": "Updated Document 1 Title",
+  "content": "This is"
+}
+
+### Delete document
+DELETE {{base_url}}/api/documents/695d059c415cc5ab22b30291
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5ld3VzZXIzNUB0ZXN0LmNvbSIsImlkIjoiNjhiOTQ3MDMyNTEwZjlhNDMzMzFmOGFhIiwidG9rZW5JZCI6ImVjYTA5NmNiLTNkZTItNDg4ZC1hNTM4LWQ4M2NmODJlNWNmNiIsImlhdCI6MTc2NzcwMTU3NywiZXhwIjoxNzY3NzA1MTc3fQ.Cs3YQQQwvlP9_1MNTUhFPqoc626XgEoSauBG5PlFpSo
+
+### Update document with malicious content (XSS test)
+PUT {{base_url}}/api/documents/695f8510466ac803cdf70e56
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJpZCI6IjY5MmZmOWU2MGU1M2M4YjIxOGM1NjQyNSIsInRva2VuSWQiOiJjMTU1MDdjNy1kYzBlLTQ5OGQtOTFlNy0zMjkxZDBlZWVkYmYiLCJpYXQiOjE3Njc4NjYxMDYsImV4cCI6MTc2Nzg2OTcwNn0.hWACBxN15tOwdqLsSp5WQL4QNWOF7fYnG9F6Go44JbE
+
+{
+  "title": "AA <script>alert('XSS')</script>",
+  "content": "<script>alert(1)</script><img src=x onerror=alert(2)><svg onload=alert(3)><iframe src=javascript:alert(4)><form><math><mtext><img src=x onerror=alert(5)>"
+}

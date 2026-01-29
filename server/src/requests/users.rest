@@ -1,0 +1,17 @@
+@base_url = http://localhost:3001
+
+### Get all users
+GET {{base_url}}/api/users
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im5ld3VzZXIzNSIsImlkIjoiNjg2Zjg3N2NhNjZlM2ZjNjhmODhkNzI3IiwiaWF0IjoxNzUyNTY5MjM5LCJleHAiOjE3NTI1NzI4Mzl9.lbiSeOmGAgDVWqmAAv_hbOW3bnJapWq-CgXCekOFTcc
+
+### Create a new user
+POST {{base_url}}/api/users
+Content-Type: application/json
+
+{
+  "email": "newuser35@test.com",
+  "name": "Chris",
+  "password": "secretuser",
+  "confirmPassword": "secretuser"
+}
