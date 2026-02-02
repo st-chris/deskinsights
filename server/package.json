@@ -7,7 +7,8 @@
     "dev": "NODE_ENV=development ts-node-dev src/index.ts",
     "test": "NODE_ENV=test jest --detectOpenHandles ",
     "tsc": "tsc",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "ts-node src/seeds/demo.ts"
   },
   "author": "",
   "license": "ISC",

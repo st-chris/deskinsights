@@ -10,7 +10,7 @@ import mongoose from 'mongoose';
 export const getDocumentWithAccess = async (
   docId: string,
   userId: string | undefined,
-  response: Response
+  response: Response,
 ): Promise<{ document: IDocument; workspace: IWorkspace } | null> => {
   // Check userId exists
   if (!userId) {
@@ -54,7 +54,7 @@ export const getDocumentWithAccess = async (
 export const getWorkspaceWithAccess = async (
   workspaceId: string,
   userId: string | undefined,
-  response: Response
+  response: Response,
 ): Promise<IWorkspace | null> => {
   // Check userId exists
   if (!userId) {
@@ -91,7 +91,7 @@ export const getWorkspaceWithAccess = async (
 export const getWorkspaceWithOwnerAccess = async (
   workspaceId: string,
   userId: string | undefined,
-  response: Response
+  response: Response,
 ): Promise<IWorkspace | null> => {
   const workspace = await getWorkspaceWithAccess(workspaceId, userId, response);
   if (!workspace) return null;
@@ -106,11 +106,27 @@ export const getWorkspaceWithOwnerAccess = async (
 };
 
 export const getPlainTextWordCountCharCount = (
-  content: string
+  content: string,
 ): { plainText: string; wordCount: number; characterCount: number } => {
-  const plainText = content.replace(/<[^>]*>/g, '');
-  const wordCount = plainText.split(/\s+/).filter((w) => w).length;
+  // Remove HTML tags
+  let plainText = content.replace(/<[^>]*>/g, ' ');
+
+  // Decode common HTML entities
+  plainText = plainText
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'");
+
+  // Split by whitespace and filter empty strings
+  const words = plainText.split(/\s+/).filter((w) => w.trim().length > 0);
+  const wordCount = words.length;
+
+  // Remove all whitespace for character count
   const characterCount = plainText.replace(/\s/g, '').length;
 
-  return { plainText, wordCount, characterCount };
+  return { plainText: plainText.trim(), wordCount, characterCount };
 };
