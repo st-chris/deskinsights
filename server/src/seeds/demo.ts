@@ -10,7 +10,7 @@ dotenv.config();
 
 const DEMO_USER = {
   name: 'Demo User',
-  email: 'demo@deskinsights.com',
+  email: 'demo@example.com',
   password: 'Demo123!',
 };
 

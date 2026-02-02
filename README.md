@@ -4,6 +4,12 @@ AI-powered document management and collaboration platform built with modern web 
 
 ![Status](https://img.shields.io/badge/status-in%20development-yellow)
 
+## Overview
+
+DeskInsights is a full-stack document collaboration platform that combines rich text editing with AI-powered insights. Create, organize, and enhance your documents with features like automatic summarization, AI chat, and content generation.
+
+**Demo Account:** `demo@example.com` / `Demo123!`
+
 ## Features
 
 - **Rich Text Editing** - Tiptap editor with formatting, lists, and tables
@@ -62,6 +68,10 @@ cp .env.example .env
 cd ../client
 npm install
 cp .env.example .env
+
+# Seed demo data (optional)
+cd ../server
+npm run seed
 
 # Run backend (from server folder)
 npm run dev
