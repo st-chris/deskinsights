@@ -1,10 +1,9 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { logout, refreshLogin } from './reducers/auth/auth';
 import type { AppDispatch } from './types/redux';
-import Home from './pages/Home';
-import Profile from './pages/Profile';
+import DashboardHome from './pages/DashboardHome/DashboardHome';
 import ProtectedRoute from './components/protected/ProtectedRoute';
 import MainLayout from './components/layout/MainLayout';
 import AuthLayout from './components/layout/AuthLayout';
@@ -14,6 +13,7 @@ import AuthRedirectRoute from './components/protected/AuthRedirectRoute';
 import DocumentEditor from './pages/DocumentEditor/DocumentEditor';
 import Workspaces from './pages/WorkspaceList/WorkspaceList';
 import WorkspaceDocuments from './pages/WorkspaceDocumentList/WorkspaceDocumentList';
+import Settings from './pages/Settings/Settings';
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,6 +28,20 @@ export default function App() {
       hasRefreshed.current = true;
     }
   }, [dispatch]);
+
+  // Initialize theme on app load
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  }, []);
+
+  // Get the default landing page preference
+  const getDefaultRoute = () => {
+    const savedView = localStorage.getItem('defaultView');
+    return savedView === 'workspaces' ? '/workspaces' : '/dashboard';
+  };
 
   return (
     <Routes>
@@ -53,12 +67,22 @@ export default function App() {
 
       {/* Main app */}
       <Route element={<MainLayout />}>
-        <Route path='/' element={<Home />} />
+        {/* Redirect root to user's preferred page */}
+        <Route path='/' element={<Navigate to={getDefaultRoute()} replace />} />
+
         <Route
-          path='/profile'
+          path='/dashboard'
           element={
             <ProtectedRoute>
-              <Profile />
+              <DashboardHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path='/settings'
+          element={
+            <ProtectedRoute>
+              <Settings />
             </ProtectedRoute>
           }
         />

@@ -11,7 +11,7 @@ export default function AuthRedirectRoute({
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
   if (isAuthenticated) {
-    return <Navigate to='/workspaces' replace />;
+    return <Navigate to='/' replace />;
   }
 
   return children;

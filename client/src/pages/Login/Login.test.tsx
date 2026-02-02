@@ -218,7 +218,7 @@ describe('Login', () => {
   });
 
   describe('Login flow', () => {
-    test('successful login navigates to /workspaces', async () => {
+    test('successful login navigates to /', async () => {
       // Mock successful authService.login response
       const mockUser = {
         email: 'test@example.com',
@@ -248,7 +248,7 @@ describe('Login', () => {
       });
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/workspaces');
+        expect(mockNavigate).toHaveBeenCalledWith('/');
       });
     });
 

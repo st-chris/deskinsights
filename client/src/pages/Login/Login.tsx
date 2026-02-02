@@ -29,7 +29,7 @@ export default function Login() {
     const result = await dispatch(login(data));
 
     if (login.fulfilled.match(result)) {
-      navigate('/workspaces');
+      navigate('/');
     }
   };
 

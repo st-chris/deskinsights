@@ -27,11 +27,11 @@ export default function MainLayout() {
             </span>
 
             <nav className='hidden md:flex gap-6 text-sm font-semibold'>
-              <NavLinkItem label='Home' to='/' />
+              <NavLinkItem label='Dashboard' to='/dashboard' />
               {isAuthenticated && (
                 <NavLinkItem label='Workspaces' to='/workspaces' />
               )}
-              <NavLinkItem label='Profile' to='/profile' />
+              <NavLinkItem label='Settings' to='/settings' />
             </nav>
           </div>
 
