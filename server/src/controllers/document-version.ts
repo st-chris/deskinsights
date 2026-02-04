@@ -5,7 +5,10 @@ import { getDocumentWithAccess } from '../utils/documentHelpers';
 
 // Get all versions for a document
 export const getVersions = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ documentId: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { documentId } = request.params;
     const userId = request.userId;
 
@@ -38,7 +41,10 @@ export const getVersions = asyncHandler(
 
 // Get specific version content
 export const getVersionContent = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ documentId: string; versionNumber: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { documentId, versionNumber } = request.params;
     const userId = request.userId;
 
@@ -69,7 +75,10 @@ export const getVersionContent = asyncHandler(
 
 // Restore a version (makes it the current content)
 export const restoreVersion = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ documentId: string; versionNumber: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { documentId, versionNumber } = request.params;
     const userId = request.userId;
 

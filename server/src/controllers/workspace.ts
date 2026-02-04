@@ -37,7 +37,7 @@ export const getWorkspacesForUser = asyncHandler(
     ])) as [IWorkspace[], CountResult[]];
 
     const countMap = new Map<string, number>(
-      counts.map((c) => [c._id.toString(), c.count])
+      counts.map((c) => [c._id.toString(), c.count]),
     );
 
     const workspacesWithCounts = workspaces.map((ws) => ({
@@ -47,14 +47,14 @@ export const getWorkspacesForUser = asyncHandler(
 
     response.json(workspacesWithCounts);
     return;
-  }
+  },
 );
 
 // Create workspace
 export const createWorkspace = asyncHandler(
   async (
     request: Request<object, object, WorkspaceBody>,
-    response: Response
+    response: Response,
   ): Promise<void> => {
     const { name, description } = request.body;
     const userId = request.userId;
@@ -79,12 +79,15 @@ export const createWorkspace = asyncHandler(
     const savedWorkspace = await workspace.save();
     response.status(201).json(savedWorkspace);
     return;
-  }
+  },
 );
 
 // Get workspace by ID
 export const getWorkspaceById = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ id: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { id } = request.params;
     const userId = request.userId;
 
@@ -93,14 +96,14 @@ export const getWorkspaceById = asyncHandler(
     if (!workspace) return;
 
     response.json(workspace);
-  }
+  },
 );
 
 // Update workspace
 export const updateWorkspace = asyncHandler(
   async (
     request: Request<{ id: string }, object, Partial<WorkspaceBody>>,
-    response: Response
+    response: Response,
   ): Promise<void> => {
     const { id } = request.params;
     const { name, description } = request.body;
@@ -116,11 +119,14 @@ export const updateWorkspace = asyncHandler(
     const updatedWorkspace = await workspace.save();
     response.json(updatedWorkspace);
     return;
-  }
+  },
 );
 
 export const deleteWorkspace = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ id: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { id } = request.params;
     const userId = request.userId;
 
@@ -135,5 +141,5 @@ export const deleteWorkspace = asyncHandler(
 
     response.json({ message: 'Workspace deleted' });
     return;
-  }
+  },
 );

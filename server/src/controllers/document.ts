@@ -61,7 +61,10 @@ export const createDocument = asyncHandler(
 
 // Get documents in workspace
 export const getDocuments = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ workspaceId: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { workspaceId } = request.params;
     const userId = request.userId;
 
@@ -88,7 +91,10 @@ export const getDocuments = asyncHandler(
 
 // Get single document
 export const getDocumentById = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ id: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { id } = request.params;
     const userId = request.userId;
 
@@ -168,7 +174,10 @@ export const updateDocument = asyncHandler(
 
 // Delete document
 export const deleteDocument = asyncHandler(
-  async (request: Request, response: Response): Promise<void> => {
+  async (
+    request: Request<{ id: string }>,
+    response: Response,
+  ): Promise<void> => {
     const { id } = request.params;
     const userId = request.userId;
 
