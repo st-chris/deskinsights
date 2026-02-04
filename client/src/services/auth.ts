@@ -1,6 +1,6 @@
 import api from './api';
 import type { LoginFormData } from '../utils/validationSchema';
-const baseUrl = 'http://localhost:3001/api/auth';
+const baseUrl = '/auth';
 
 const getTokenFromLocalStorage = () => {
   const loggedUserJSON = localStorage.getItem('loggedUser');

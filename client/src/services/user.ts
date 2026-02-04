@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { RegisterFormData } from '../utils/validationSchema';
 import logger from './logger';
-const baseUrl = 'http://localhost:3001/api/users';
+const baseUrl = '/users';
 
 const register = async (registerData: RegisterFormData) => {
   const { email, password, confirmPassword, name } = registerData;
