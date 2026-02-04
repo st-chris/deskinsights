@@ -9,7 +9,10 @@ const MONGODB_URI =
     ? process.env.MONGODB_URI_TEST
     : process.env.MONGODB_URI;
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://deskinsights.vercel.app',
+];
 
 const cookiePreferences: CookieOptions = {
   httpOnly: true,

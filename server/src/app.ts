@@ -1,5 +1,5 @@
 import express from 'express';
-import cors, { CorsOptions } from 'cors';
+import cors from 'cors';
 import mongoose, { Error } from 'mongoose';
 import config from './utils/config';
 import logger from './utils/logger';
@@ -30,11 +30,6 @@ mongoose
     logger.error('error connecting to MongoDB:', error.message);
   });
 
-const options: CorsOptions = {
-  credentials: true,
-  origin: config.allowedOrigins,
-};
-
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: process.env.NODE_ENV === 'test' ? 10000 : 100,
@@ -62,7 +57,23 @@ app.use(
     contentSecurityPolicy: false, // Disable for React (CSP blocks inline styles)
   }),
 );
-app.use(cors(options));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (
+        !origin ||
+        config.allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app')
+      ) {
+        // Allow all Vercel preview URLs
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(express.static('dist'));
 app.use(express.json());
 app.use(cookieParser());
