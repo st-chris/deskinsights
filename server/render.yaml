@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: deskinsights-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: SECRET
+        sync: false
+      - key: REFRESH_SECRET
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
