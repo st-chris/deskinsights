@@ -2,6 +2,9 @@ services:
   - type: web
     name: deskinsights-api
     runtime: node
+    plan: free
+    region: frankfurt
+    rootDir: server
     buildCommand: npm install && npm run build
     startCommand: npm start
     envVars:
