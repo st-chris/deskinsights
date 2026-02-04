@@ -11,6 +11,12 @@ const processQueue = () => {
   failedQueue = [];
 };
 
+console.log('ENV Check:', {
+  VITE_API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+  allEnv: import.meta.env,
+  mode: import.meta.env.MODE,
+});
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
   withCredentials: true,
