@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useAIAction, useAIDocumentSummary } from '../../hooks/useAiActions';
 import { useAiChatPersistence } from '../../hooks/useAiChatPersistence';
+import ReactMarkdown from 'react-markdown';
 
 interface AiSidebarProps {
   text: string;
@@ -160,7 +161,13 @@ export const AiSidebar = ({
                             : 'bg-white border border-slate-200 shadow-sm'
                         }`}
                       >
-                        {msg.content}
+                        {msg.role === 'ai' ? (
+                          <div className='prose prose-sm max-w-none'>
+                            <ReactMarkdown>{msg.content}</ReactMarkdown>
+                          </div>
+                        ) : (
+                          msg.content
+                        )}
                       </div>
                     </div>
                   ))}

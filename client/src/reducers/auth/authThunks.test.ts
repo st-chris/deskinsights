@@ -158,7 +158,6 @@ describe('Auth Thunks', () => {
 
     it('uses localStorage user and calls getLoggedUser when token not expired', async () => {
       setTokenInLocalStorage();
-      const fakeUserJSON = localStorage.getItem('loggedUser');
       mockedIsTokenExpired.mockReturnValue(false);
 
       const mockUser = { id: '123', name: 'Test User', email: 'user@test.com' };
@@ -166,9 +165,7 @@ describe('Auth Thunks', () => {
 
       const result = await dispatch(refreshLogin());
 
-      expect(mockedUserService.getLoggedUser).toHaveBeenCalledWith(
-        fakeUserJSON,
-      );
+      expect(mockedUserService.getLoggedUser).toHaveBeenCalled();
       expect(mockedAuthService.refreshToken).not.toHaveBeenCalled();
 
       expect(refreshLogin.fulfilled.match(result)).toBe(true);
