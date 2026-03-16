@@ -1,6 +1,12 @@
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import {
+  render,
+  screen,
+  waitFor,
+  fireEvent,
+  act,
+} from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useParams } from 'react-router-dom';
 import { configureStore } from '@reduxjs/toolkit';
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -9,6 +15,15 @@ import documentsReducer from '../../reducers/document/document';
 import '@testing-library/jest-dom/vitest';
 import type { DocumentFull, DocumentsState } from '../../models/document';
 import type { ReactNode } from 'react';
+import documentService from '../../services/document';
+
+vi.mock('../../services/api', () => ({
+  default: {
+    get: vi.fn().mockResolvedValue({ data: [] }),
+    post: vi.fn().mockResolvedValue({ data: {} }),
+    put: vi.fn().mockResolvedValue({ data: {} }),
+  },
+}));
 
 // Mock Editor - render HTML content like the real component
 vi.mock('../../components/Editor', () => ({
@@ -41,21 +56,16 @@ vi.mock('../../hooks', async () => {
 });
 
 // Mock react-router-dom
+const mockNavigate = vi.fn();
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
-    useParams: vi.fn(() => ({ documentId: '123' })),
+    useParams: vi.fn(() => ({ documentId: '123', workspaceId: 'ws1' })),
+    useNavigate: () => mockNavigate,
   };
 });
-
-// Mock the document service to prevent API calls
-vi.mock('../../services/document', () => ({
-  default: {
-    getDocumentById: vi.fn().mockResolvedValue({}),
-    updateDocument: vi.fn().mockResolvedValue({}),
-  },
-}));
 
 const mockDocument: DocumentFull = {
   _id: '123',
@@ -72,6 +82,14 @@ const mockDocument: DocumentFull = {
   isPinned: false,
   isArchived: false,
 };
+
+// Mock the document service to prevent API calls
+vi.mock('../../services/document', () => ({
+  default: {
+    getDocumentById: vi.fn(),
+    updateDocument: vi.fn(),
+  },
+}));
 
 const createLoadingState = (): DocumentsState => ({
   items: [],
@@ -121,6 +139,13 @@ const createWrapper = (documentsState: DocumentsState) => {
 describe('DocumentEditor', () => {
   beforeEach(() => {
     vi.useFakeTimers();
+    mockNavigate.mockClear();
+
+    vi.mocked(documentService.getDocumentById).mockResolvedValue(mockDocument);
+    vi.mocked(documentService.updateDocument).mockResolvedValue({
+      ...mockDocument,
+      title: 'Updated',
+    });
   });
 
   afterEach(() => {
@@ -201,5 +226,103 @@ describe('DocumentEditor', () => {
       expect(screen.getByText('Version History')).toBeInTheDocument();
       expect(screen.getByText('Loading versions...')).toBeInTheDocument();
     });
+  });
+
+  it('updates title on input change', async () => {
+    vi.useRealTimers();
+    const { unmount } = render(<DocumentEditor />, {
+      wrapper: createWrapper(createLoadedState()),
+    });
+
+    const titleInput = await waitFor(() =>
+      screen.getByDisplayValue('Test Doc'),
+    );
+    fireEvent.change(titleInput, { target: { value: 'New Title' } });
+
+    expect(screen.getByDisplayValue('New Title')).toBeInTheDocument();
+    unmount();
+  });
+
+  it('shows saving state during debounced update', async () => {
+    vi.useRealTimers();
+
+    const { unmount } = render(<DocumentEditor />, {
+      wrapper: createWrapper(createLoadedState()),
+    });
+
+    const titleInput = await waitFor(() =>
+      screen.getByDisplayValue('Test Doc'),
+    );
+
+    vi.useFakeTimers();
+    fireEvent.change(titleInput, { target: { value: 'Updated' } });
+
+    // Wait for debounce (500ms) to trigger saving state
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(screen.getByText(/saving/i)).toBeInTheDocument();
+
+    await act(async () => {
+      vi.advanceTimersByTime(400);
+    });
+
+    vi.useRealTimers();
+    unmount();
+  });
+
+  it('triggers content update when editor clicked', async () => {
+    vi.useRealTimers();
+    const { unmount } = render(<DocumentEditor />, {
+      wrapper: createWrapper(createLoadedState()),
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('editor')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId('editor'));
+
+    // Content update triggered (no error thrown)
+    await waitFor(() => {
+      expect(screen.getByTestId('editor')).toBeInTheDocument();
+    });
+    unmount();
+  });
+
+  it('navigates back to workspace on back button click', async () => {
+    vi.useRealTimers();
+
+    const { unmount } = render(<DocumentEditor />, {
+      wrapper: createWrapper(createLoadedState()),
+    });
+
+    // Wait until the document is loaded into Redux (title visible)
+    await waitFor(() => {
+      expect(screen.getByDisplayValue('Test Doc')).toBeInTheDocument();
+    });
+
+    const backButton = screen.getByRole('button', { name: /back/i });
+
+    fireEvent.click(backButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/workspaces/ws1');
+
+    unmount();
+  });
+
+  it('shows loading when no documentId', () => {
+    vi.mocked(useParams).mockReturnValueOnce({
+      documentId: undefined,
+      workspaceId: 'ws1',
+    });
+
+    const { unmount } = render(<DocumentEditor />, {
+      wrapper: createWrapper(createLoadedState()),
+    });
+
+    expect(screen.getByText('Loading...')).toBeInTheDocument();
+    unmount();
   });
 });

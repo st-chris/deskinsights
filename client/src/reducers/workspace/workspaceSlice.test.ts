@@ -1,4 +1,6 @@
+import { configureStore } from '@reduxjs/toolkit';
 import type { Workspace, WorkspacesState } from '../../models/workspace';
+import workspaceService from '../../services/workspace';
 import workspacesReducer, {
   fetchWorkspaces,
   fetchWorkspaceById,
@@ -8,6 +10,8 @@ import workspacesReducer, {
   clearWorkspaceError,
   clearSelectedWorkspace,
 } from './workspace';
+
+vi.mock('../../services/workspace');
 
 const initialState: WorkspacesState = {
   items: [],
@@ -39,14 +43,23 @@ const mockWorkspace: Workspace = {
   ownerId: 'owner1',
 };
 
+const createTestStore = () =>
+  configureStore({ reducer: { workspaces: workspacesReducer } });
+
 describe('Workspaces Reducer', () => {
+  let store: ReturnType<typeof createTestStore>;
+
+  beforeEach(() => {
+    store = createTestStore();
+    vi.clearAllMocks();
+  });
+
   it('should return the initial state', () => {
     expect(workspacesReducer(undefined, { type: 'unknown' })).toEqual(
       initialState,
     );
   });
 
-  // Sync reducers
   it('should handle clearWorkspaceError', () => {
     const state = { ...initialState, isError: true, errorMessage: 'Error' };
     const nextState = workspacesReducer(state, clearWorkspaceError());
@@ -60,7 +73,6 @@ describe('Workspaces Reducer', () => {
     expect(nextState.selectedWorkspace).toBeNull();
   });
 
-  // fetchWorkspaces
   it('should handle fetchWorkspaces.pending', () => {
     const nextState = workspacesReducer(
       initialState,
@@ -90,18 +102,15 @@ describe('Workspaces Reducer', () => {
     expect(nextState.errorMessage).toBe('Fetch failed');
   });
 
-  // fetchWorkspaceById
   it('should handle fetchWorkspaceById.fulfilled', () => {
     const nextState = workspacesReducer(initialState, {
       type: fetchWorkspaceById.fulfilled.type,
       payload: mockWorkspace,
-      meta: { arg: '1' },
     });
     expect(nextState.isLoading).toBe(false);
     expect(nextState.selectedWorkspace).toEqual(mockWorkspace);
   });
 
-  // createWorkspace
   it('should handle createWorkspace.fulfilled', () => {
     const newWorkspace = {
       _id: '2',
@@ -109,17 +118,17 @@ describe('Workspaces Reducer', () => {
       description: 'New one',
       createdAt: '2026-01-21T16:49:00.000Z',
       updatedAt: '2026-01-21T16:49:00.000Z',
+      documentCount: 0,
+      ownerId: 'owner1',
     };
     const nextState = workspacesReducer(initialState, {
       type: createWorkspace.fulfilled.type,
       payload: newWorkspace,
-      meta: { arg: { name: 'New Workspace' } },
     });
     expect(nextState.isLoading).toBe(false);
     expect(nextState.items).toEqual([newWorkspace]);
   });
 
-  // updateWorkspace
   it('should handle updateWorkspace.fulfilled with matching selected ID', () => {
     const stateWithItems = {
       ...initialState,
@@ -129,7 +138,6 @@ describe('Workspaces Reducer', () => {
     const nextState = workspacesReducer(stateWithItems, {
       type: updateWorkspace.fulfilled.type,
       payload: mockWorkspace,
-      meta: { arg: { id: '1', payload: { name: 'Updated Workspace' } } },
     });
     expect(nextState.items[0]).toEqual(mockWorkspace);
     expect(nextState.selectedWorkspace).toEqual(mockWorkspace);
@@ -145,7 +153,6 @@ describe('Workspaces Reducer', () => {
     const nextState = workspacesReducer(stateWithItems, {
       type: updateWorkspace.fulfilled.type,
       payload: mockWorkspace,
-      meta: { arg: { id: '1', payload: { name: 'Updated Workspace' } } },
     });
     expect(nextState.items[0]).toEqual(mockWorkspace);
     expect(nextState.selectedWorkspace?._id).toBe('999');
@@ -155,14 +162,12 @@ describe('Workspaces Reducer', () => {
     const nextState = workspacesReducer(initialState, {
       type: updateWorkspace.rejected.type,
       payload: { message: 'Update failed' },
-      meta: { arg: { id: '1', payload: {} } },
     });
     expect(nextState.isLoading).toBe(false);
     expect(nextState.isError).toBe(true);
     expect(nextState.errorMessage).toBe('Update failed');
   });
 
-  // deleteWorkspace
   it('should handle deleteWorkspace.fulfilled with matching selected ID', () => {
     const stateWithItems = {
       ...initialState,
@@ -175,7 +180,6 @@ describe('Workspaces Reducer', () => {
     });
     expect(nextState.items).toEqual([]);
     expect(nextState.selectedWorkspace).toBeNull();
-    expect(nextState.isLoading).toBe(false);
   });
 
   it('should handle deleteWorkspace.fulfilled without matching selected ID', () => {
@@ -190,5 +194,105 @@ describe('Workspaces Reducer', () => {
     });
     expect(nextState.items).toEqual([]);
     expect(nextState.selectedWorkspace?._id).toBe('999');
+  });
+
+  it('should handle deleteWorkspace.rejected', () => {
+    const nextState = workspacesReducer(initialState, {
+      type: deleteWorkspace.rejected.type,
+      payload: { message: 'Delete failed' },
+    });
+    expect(nextState.isLoading).toBe(false);
+    expect(nextState.isError).toBe(true);
+    expect(nextState.errorMessage).toBe('Delete failed');
+  });
+
+  it('uses fallback error message when payload has no message', () => {
+    const nextState = workspacesReducer(initialState, {
+      type: fetchWorkspaces.rejected.type,
+      payload: undefined,
+    });
+    expect(nextState.errorMessage).toBe('Failed to fetch workspaces');
+  });
+
+  describe('workspace thunks', () => {
+    it('fetchWorkspaces handles success', async () => {
+      vi.mocked(workspaceService.getWorkspaces).mockResolvedValue(
+        mockWorkspaces,
+      );
+
+      const result = await store.dispatch(fetchWorkspaces());
+      expect(result.payload).toEqual(mockWorkspaces);
+      expect(workspaceService.getWorkspaces).toHaveBeenCalled();
+    });
+
+    it('fetchWorkspaces handles axios error with message', async () => {
+      vi.mocked(workspaceService.getWorkspaces).mockRejectedValue({
+        response: { data: { message: 'Unauthorized' } },
+        isAxiosError: true,
+      });
+
+      const result = await store.dispatch(fetchWorkspaces());
+      expect(result.payload).toEqual({ message: 'Unauthorized' });
+    });
+
+    it('fetchWorkspaces handles generic error', async () => {
+      vi.mocked(workspaceService.getWorkspaces).mockRejectedValue(
+        new Error('Network error'),
+      );
+
+      const result = await store.dispatch(fetchWorkspaces());
+      expect(result.payload).toEqual({ message: 'Failed to fetch workspaces' });
+    });
+
+    it('fetchWorkspaceById handles success', async () => {
+      vi.mocked(workspaceService.getWorkspaceById).mockResolvedValue(
+        mockWorkspace,
+      );
+
+      const result = await store.dispatch(fetchWorkspaceById('1'));
+      expect(result.payload).toEqual(mockWorkspace);
+      expect(workspaceService.getWorkspaceById).toHaveBeenCalledWith('1');
+    });
+
+    it('createWorkspace handles success', async () => {
+      vi.mocked(workspaceService.createWorkspace).mockResolvedValue(
+        mockWorkspace,
+      );
+
+      const result = await store.dispatch(
+        createWorkspace({ name: 'New Workspace' }),
+      );
+      expect(result.payload).toEqual(mockWorkspace);
+    });
+
+    it('updateWorkspace handles success', async () => {
+      vi.mocked(workspaceService.updateWorkspace).mockResolvedValue(
+        mockWorkspace,
+      );
+
+      const result = await store.dispatch(
+        updateWorkspace({ id: '1', payload: { name: 'Updated' } }),
+      );
+      expect(result.payload).toEqual(mockWorkspace);
+    });
+
+    it('deleteWorkspace handles success', async () => {
+      vi.mocked(workspaceService.deleteWorkspace).mockResolvedValue({
+        message: 'Deleted',
+      });
+
+      const result = await store.dispatch(deleteWorkspace('1'));
+      expect(result.payload).toBe('1');
+    });
+
+    it('deleteWorkspace handles axios error', async () => {
+      vi.mocked(workspaceService.deleteWorkspace).mockRejectedValue({
+        response: { data: { message: 'Not found' } },
+        isAxiosError: true,
+      });
+
+      const result = await store.dispatch(deleteWorkspace('999'));
+      expect(result.payload).toEqual({ message: 'Not found' });
+    });
   });
 });

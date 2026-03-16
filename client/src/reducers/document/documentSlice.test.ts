@@ -4,6 +4,8 @@ import type {
   DocumentSummary,
   UpdateDocumentPayload,
 } from '../../models/document';
+import documentService from '../../services/document';
+import { store } from '../../store';
 import documentsReducer, {
   fetchDocumentsInWorkspace,
   fetchDocumentById,
@@ -13,6 +15,8 @@ import documentsReducer, {
   clearDocumentError,
   clearCurrentDocument,
 } from './document';
+
+vi.mock('../../services/document');
 
 const initialState: DocumentsState = {
   items: [],
@@ -100,7 +104,15 @@ describe('Documents Reducer', () => {
     expect(nextState.errorMessage).toBe('Fetch failed');
   });
 
-  // fetchDocumentById (similar pattern)
+  it('uses fallback error message when payload has no message', () => {
+    const nextState = documentsReducer(initialState, {
+      type: fetchDocumentsInWorkspace.rejected.type,
+      payload: undefined,
+    });
+    expect(nextState.errorMessage).toBe('Failed to fetch documents');
+  });
+
+  // fetchDocumentById
   it('should handle fetchDocumentById.fulfilled', () => {
     const nextState = documentsReducer(initialState, {
       type: fetchDocumentById.fulfilled.type,
@@ -119,6 +131,14 @@ describe('Documents Reducer', () => {
     expect(nextState.items).toContainEqual(
       expect.objectContaining({ _id: '1', title: 'Full Doc' }),
     );
+  });
+
+  it('createDocument.pending sets loading', () => {
+    const nextState = documentsReducer(
+      initialState,
+      createDocument.pending('req1', { workspaceId: 'ws1' }),
+    );
+    expect(nextState.isLoading).toBe(true);
   });
 
   // updateDocument
@@ -253,5 +273,35 @@ describe('Documents Reducer', () => {
     });
     expect(nextState.items).toEqual([]);
     expect(nextState.currentDocument).toBeNull();
+  });
+
+  describe('document thunks', () => {
+    it('fetchDocumentById handles success', async () => {
+      vi.mocked(documentService.getDocumentById).mockResolvedValue(mockFullDoc);
+
+      const result = await store.dispatch(fetchDocumentById('123'));
+      expect(result.payload).toEqual(mockFullDoc);
+      expect(documentService.getDocumentById).toHaveBeenCalledWith('123');
+    });
+
+    it('fetchDocumentById handles axios error with message', async () => {
+      const axiosError = {
+        response: { data: { message: 'Not found' } },
+        isAxiosError: true,
+      };
+      vi.mocked(documentService.getDocumentById).mockRejectedValue(axiosError);
+
+      const result = await store.dispatch(fetchDocumentById('999'));
+      expect(result.payload).toEqual({ message: 'Not found' });
+    });
+
+    it('fetchDocumentById handles generic error', async () => {
+      vi.mocked(documentService.getDocumentById).mockRejectedValue(
+        new Error('Network error'),
+      );
+
+      const result = await store.dispatch(fetchDocumentById('999'));
+      expect(result.payload).toEqual({ message: 'Failed to fetch document' });
+    });
   });
 });

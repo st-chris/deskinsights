@@ -44,6 +44,23 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
+// Full navigation mocks for export download
+Object.defineProperty(window, 'location', {
+  value: {
+    href: 'http://localhost',
+    assign: vi.fn(),
+    reload: vi.fn(),
+  },
+  writable: true,
+});
+
+// Mock <a> downloads
+const mockAnchorClick = vi.fn();
+Object.defineProperty(HTMLAnchorElement.prototype, 'click', {
+  value: mockAnchorClick,
+  writable: true,
+});
+
 // Mock URL methods
 window.URL.createObjectURL = vi.fn(() => 'mock-url');
 window.URL.revokeObjectURL = vi.fn();
@@ -337,10 +354,9 @@ describe('Settings', () => {
 
       const exportButton = screen.getByRole('button', { name: /📤 export/i });
       fireEvent.click(exportButton);
-
-      await waitFor(() => {
-        expect(window.URL.createObjectURL).toHaveBeenCalled();
-      });
+      await waitFor(() =>
+        expect(window.URL.createObjectURL).toHaveBeenCalled(),
+      );
     });
   });
 

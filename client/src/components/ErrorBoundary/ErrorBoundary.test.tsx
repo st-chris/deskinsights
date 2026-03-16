@@ -3,6 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { ErrorBoundary } from './ErrorBoundary';
 import * as loggerModule from '../../services/logger';
 
+// Suppress expected error logs
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
 vi.mock('../../services/logger');
 const mockedLogger = vi.mocked(loggerModule.default).error;
 
@@ -44,5 +47,13 @@ describe('ErrorBoundary', () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText('Error Details (Dev Only)')).toBeInTheDocument();
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockClear();
+  });
+
+  afterAll(() => {
+    consoleErrorSpy.mockRestore();
   });
 });

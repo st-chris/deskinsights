@@ -1,42 +1,30 @@
-import axios from 'axios';
 import type { RegisterFormData } from '../utils/validationSchema';
-import logger from './logger';
+import api from './api';
+import type { User } from '../models/user';
+
 const baseUrl = '/users';
 
-const register = async (registerData: RegisterFormData) => {
+// Register new user
+const register = async (registerData: RegisterFormData): Promise<User> => {
   const { email, password, confirmPassword, name } = registerData;
-
-  try {
-    const response = await axios.post(baseUrl, {
-      email,
-      password,
-      confirmPassword,
-      name,
-    });
-    return response.data;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(`Registration failed: ${error.response.data}`);
-    } else {
-      throw new Error(
-        'Registration failed: Network error or server not responding',
-      );
-    }
-  }
+  const response = await api.post(baseUrl, {
+    email,
+    password,
+    confirmPassword,
+    name,
+  });
+  return response.data;
 };
 
-const getLoggedUser = async (loggedUserJSON: string) => {
-  try {
-    const response = await axios.get(`${baseUrl}/me`, {
-      headers: {
-        Authorization: `Bearer ${JSON.parse(loggedUserJSON).token}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    logger.error('UserService.GetLoggedUser', error);
-    return null;
-  }
+// Get current logged-in user
+const getLoggedUser = async (): Promise<User> => {
+  const response = await api.get(`${baseUrl}/me`);
+  return response.data;
 };
 
-export default { register, getLoggedUser };
+const userService = {
+  register,
+  getLoggedUser,
+};
+
+export default userService;

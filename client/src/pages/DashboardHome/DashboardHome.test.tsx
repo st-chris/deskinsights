@@ -370,15 +370,17 @@ describe('DashboardHome', () => {
       });
     });
 
-    test('disables New workspace button when loading', () => {
+    test('disables New workspace button when loading', async () => {
       const store = createMockStore({ isLoading: true });
 
       renderWithProviders(<DashboardHome />, { store });
 
-      const buttons = screen.getAllByRole('button', {
-        name: /new workspace/i,
+      await waitFor(() => {
+        const buttons = screen.getAllByRole('button', {
+          name: /new workspace/i,
+        });
+        expect(buttons[0]).toBeDisabled();
       });
-      expect(buttons[0]).toBeDisabled();
     });
   });
 

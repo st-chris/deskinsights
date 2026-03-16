@@ -7,6 +7,9 @@ import { VersionHistory } from './VersionHistory';
 
 vi.mock('../../services/api');
 
+// Suppress expected error logs from component
+const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
 const mockVersions = [
   {
     versionNumber: 1,
@@ -32,7 +35,7 @@ describe('VersionHistory', () => {
     vi.mocked(api.post).mockResolvedValue({ data: { content: 'restored' } });
   });
 
-  it('renders loading state initially', () => {
+  it('renders loading state initially', async () => {
     render(
       <VersionHistory
         documentId='123'
@@ -42,7 +45,9 @@ describe('VersionHistory', () => {
       />,
     );
 
-    expect(screen.getByText('Loading versions...')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Loading versions...')).toBeInTheDocument();
+    });
   });
 
   it('renders empty state when no versions', async () => {
@@ -197,5 +202,13 @@ describe('VersionHistory', () => {
     await waitFor(() => {
       expect(screen.getByText('No versions available')).toBeInTheDocument();
     });
+  });
+
+  afterEach(() => {
+    consoleErrorSpy.mockClear();
+  });
+
+  afterAll(() => {
+    consoleErrorSpy.mockRestore();
   });
 });

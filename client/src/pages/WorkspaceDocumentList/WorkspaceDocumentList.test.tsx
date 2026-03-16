@@ -130,7 +130,7 @@ describe('WorkspaceDocuments', () => {
       expect(calls).toContain('/documents/workspace/workspace-123');
     });
 
-    test('shows loading state initially', () => {
+    test('shows loading state initially', async () => {
       const store = createMockStore({
         documents: {
           items: [],
@@ -143,7 +143,9 @@ describe('WorkspaceDocuments', () => {
 
       renderWithProviders({ store });
 
-      expect(screen.getByText(/loading documents/i)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText(/loading documents/i)).toBeInTheDocument();
+      });
     });
   });
 
@@ -246,7 +248,7 @@ describe('WorkspaceDocuments', () => {
     });
   });
 
-  describe('Header and navigation', () => {
+  describe('Header and navigation', async () => {
     test('shows workspace name and description', async () => {
       const mockWorkspace = {
         _id: 'workspace-123',
@@ -270,11 +272,13 @@ describe('WorkspaceDocuments', () => {
 
       renderWithProviders({ store });
 
-      expect(screen.getByText('My Project')).toBeInTheDocument();
-      expect(screen.getByText('Project description')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('My Project')).toBeInTheDocument();
+        expect(screen.getByText('Project description')).toBeInTheDocument();
+      });
     });
 
-    test('shows default workspace name when no workspace loaded', () => {
+    test('shows default workspace name when no workspace loaded', async () => {
       const store = createMockStore({
         workspaces: {
           items: [],
@@ -287,7 +291,9 @@ describe('WorkspaceDocuments', () => {
 
       renderWithProviders({ store });
 
-      expect(screen.getByText('Workspace')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Workspace')).toBeInTheDocument();
+      });
     });
 
     test('back button navigates to /workspaces', async () => {
@@ -304,14 +310,16 @@ describe('WorkspaceDocuments', () => {
       expect(mockNavigate).toHaveBeenCalledWith('/workspaces');
     });
 
-    test('shows new document button', () => {
+    test('shows new document button', async () => {
       const store = createMockStore();
       renderWithProviders({ store });
 
-      const newButtons = screen.getAllByRole('button', {
-        name: /new document/i,
+      await waitFor(() => {
+        const newButtons = screen.getAllByRole('button', {
+          name: /new document/i,
+        });
+        expect(newButtons.length).toBeGreaterThan(0);
       });
-      expect(newButtons.length).toBeGreaterThan(0);
     });
   });
 
@@ -345,7 +353,7 @@ describe('WorkspaceDocuments', () => {
       });
     });
 
-    test('new document button is disabled when loading', () => {
+    test('new document button is disabled when loading', async () => {
       const store = createMockStore({
         documents: {
           items: [],
@@ -358,11 +366,13 @@ describe('WorkspaceDocuments', () => {
 
       renderWithProviders({ store });
 
-      const newButtons = screen.getAllByRole('button', {
-        name: /new document/i,
-      });
-      newButtons.forEach((button) => {
-        expect(button).toBeDisabled();
+      await waitFor(() => {
+        const newButtons = screen.getAllByRole('button', {
+          name: /new document/i,
+        });
+        newButtons.forEach((button) => {
+          expect(button).toBeDisabled();
+        });
       });
     });
   });
