@@ -1,4 +1,3 @@
-// src/controllers/ai.ts
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { OpenAI } from 'openai';
@@ -44,6 +43,11 @@ interface ChatRequestBody {
   documentId?: string;
 }
 
+const parseGeminiText = (
+  text: string | undefined | null,
+  fallback = '',
+): string => (text || fallback).replace(/\\n/g, '\n');
+
 // Summarize text
 export const summarizeText = asyncHandler(
   async (
@@ -66,7 +70,7 @@ export const summarizeText = asyncHandler(
         contents: `You are a helpful assistant that summarizes documents concisely.\n\nSummarize this text:\n\n${text}`,
       });
 
-      result = geminiResponse.text || '';
+      result = parseGeminiText(geminiResponse.text);
 
       logger.info('AI.Summarize', {
         provider: 'gemini',
@@ -128,7 +132,7 @@ export const rewriteText = asyncHandler(
         contents: `Rewrite the following text in a ${tone} tone while preserving its meaning:\n\n${text}`,
       });
 
-      result = geminiResponse.text || '';
+      result = parseGeminiText(geminiResponse.text);
 
       logger.info('AI.Rewrite', {
         provider: 'gemini',
@@ -191,7 +195,7 @@ export const expandText = asyncHandler(
         contents: `Expand the following text with more detail and context:\n\n${text}`,
       });
 
-      result = geminiResponse.text || '';
+      result = parseGeminiText(geminiResponse.text);
 
       logger.info('AI.Expand', { provider: 'gemini', textLength: text.length });
     } else if (openai) {
@@ -362,7 +366,7 @@ Question: ${query}`;
         contents: prompt,
       });
 
-      result = geminiResponse.text || 'Unable to generate response';
+      result = parseGeminiText(geminiResponse.text, 'Unable to generate response');
 
       logger.info('AI.Chat', {
         provider: 'gemini',
