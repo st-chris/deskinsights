@@ -35,11 +35,12 @@ describe('Auth Thunks', () => {
   describe('register', () => {
     it('should dispatch register.fulfilled on successful registration', async () => {
       const mockUser = {
+        id: '123',
         email: 'user@test.com',
         name: 'Test User',
         token: '12345',
       };
-      mockedUserService.register.mockResolvedValue({ data: mockUser });
+      mockedUserService.register.mockResolvedValue(mockUser);
 
       await dispatch(
         register({
@@ -160,7 +161,7 @@ describe('Auth Thunks', () => {
       const fakeUserJSON = localStorage.getItem('loggedUser');
       mockedIsTokenExpired.mockReturnValue(false);
 
-      const mockUser = { id: '123', name: 'Test User' };
+      const mockUser = { id: '123', name: 'Test User', email: 'user@test.com' };
       mockedUserService.getLoggedUser.mockResolvedValue(mockUser);
 
       const result = await dispatch(refreshLogin());

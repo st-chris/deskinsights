@@ -37,7 +37,7 @@ export const register = createAsyncThunk<
 >('auth/register', async (data, thunkAPI) => {
   try {
     const response = await userService.register(data);
-    return response.data;
+    return response;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.data?.message) {
       return thunkAPI.rejectWithValue({ message: error.response.data.message });
@@ -71,7 +71,7 @@ export const refreshLogin = createAsyncThunk<
 
   if (loggedUserJSON && !isTokenExpired(loggedUserJSON)) {
     try {
-      const response = await userService.getLoggedUser(loggedUserJSON);
+      const response = await userService.getLoggedUser();
       return response;
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response?.data?.message) {
