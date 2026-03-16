@@ -50,7 +50,7 @@ export const Editor = ({ content, documentId, onUpdate }: EditorProps) => {
     editorProps: {
       attributes: {
         class:
-          'p-4 prose prose-slate prose-headings:font-bold prose-p:my-2 min-h-[400px] focus:outline-none bg-white border border-slate-200 rounded-b-lg [&_p]:my-2 [&_pre]:bg-slate-900/90 [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:text-sm [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-px [&_code]:rounded [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded',
+          'p-4 min-h-[400px] focus:outline-none bg-white border border-slate-200 rounded-b-lg [&_p]:my-2 [&_pre]:bg-slate-900/90 [&_pre]:p-3 [&_pre]:rounded-md [&_pre]:text-sm [&_code]:bg-slate-100 [&_code]:px-1 [&_code]:py-px [&_code]:rounded [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded',
       },
     },
     onUpdate: ({ editor }) => {
