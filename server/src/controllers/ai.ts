@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { asyncHandler } from '../utils/asyncHandler';
 import { OpenAI } from 'openai';
-import { GoogleGenAI } from '@google/genai'; // ← New import
+import { GoogleGenAI } from '@google/genai';
 import logger from '../utils/logger';
 
 // OpenAI setup
@@ -17,7 +17,6 @@ if (!openai && !genAI) {
   throw new Error('AI Connection is not configured properly.');
 }
 
-// Helper to choose provider
 const getAIProvider = () => {
   return genAI ? 'gemini' : 'openai';
 };
@@ -62,7 +61,7 @@ export const summarizeText = asyncHandler(
     if (provider === 'gemini' && genAI) {
       const geminiResponse = await genAI.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `You are a helpful assistant that summarizes documents concisely.\n\nSummarize this text:\n\n${text}`,
+        contents: `Summarize the following text concisely in 2-3 sentences. Return only the summary, no headings or explanations:\n\n${text}`,
       });
 
       result = geminiResponse.text || '';
@@ -78,7 +77,7 @@ export const summarizeText = asyncHandler(
           {
             role: 'system',
             content:
-              'You are a helpful assistant that summarizes documents concisely.',
+              'Summarize the provided text concisely in 2-3 sentences. Return only the summary, no headings or explanations.',
           },
           {
             role: 'user',
@@ -124,7 +123,7 @@ export const rewriteText = asyncHandler(
     if (provider === 'gemini' && genAI) {
       const geminiResponse = await genAI.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Rewrite the following text in a ${tone} tone while preserving its meaning:\n\n${text}`,
+        contents: `Rewrite the following text in a ${tone} tone while preserving its meaning. Return only the rewritten text, no explanations or alternatives:\n\n${text}`,
       });
 
       result = geminiResponse.text || '';
@@ -140,7 +139,7 @@ export const rewriteText = asyncHandler(
         messages: [
           {
             role: 'system',
-            content: `Rewrite text in a ${tone} tone while preserving meaning.`,
+            content: `Rewrite the provided text in a ${tone} tone while preserving its meaning. Return only the rewritten text, no explanations or alternatives.`,
           },
           {
             role: 'user',
@@ -187,7 +186,7 @@ export const expandText = asyncHandler(
     if (provider === 'gemini' && genAI) {
       const geminiResponse = await genAI.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Expand the following text with more detail and context:\n\n${text}`,
+        contents: `Expand the following text with more detail and context. Return only the expanded text as a single paragraph. No options, no headings, no explanations, no follow-up questions:\n\n${text}`,
       });
 
       result = geminiResponse.text || '';
@@ -199,7 +198,8 @@ export const expandText = asyncHandler(
         messages: [
           {
             role: 'system',
-            content: 'Expand this text with more detail and context.',
+            content:
+              'Expand the provided text with more detail and context. Return only the expanded text as a single paragraph. No options, no headings, no explanations, no follow-up questions.',
           },
           {
             role: 'user',
