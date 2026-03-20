@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAppSelector } from '../../hooks/hooks';
 import { selectWorkspaces } from '../../reducers/workspace/selectors';
+import {
+  Sun,
+  Moon,
+  LayoutDashboard,
+  ClipboardList,
+  Upload,
+  CheckCircle,
+} from 'lucide-react';
 
 const Settings = () => {
   const { items } = useAppSelector(selectWorkspaces);
@@ -61,7 +69,6 @@ const Settings = () => {
     document.body.removeChild(link);
     URL.revokeObjectURL(jsonURL);
 
-    // Show success message
     setShowExportSuccess(true);
     setTimeout(() => setShowExportSuccess(false), 3000);
   };
@@ -78,8 +85,9 @@ const Settings = () => {
 
       {/* Success message */}
       {showExportSuccess && (
-        <div className='rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-800'>
-          ✓ Data exported successfully!
+        <div className='flex items-center gap-2 rounded-xl border border-green-100 bg-green-50 px-4 py-3 text-sm text-green-800'>
+          <CheckCircle className='h-4 w-4 shrink-0' />
+          Data exported successfully!
         </div>
       )}
 
@@ -113,20 +121,26 @@ const Settings = () => {
           </div>
 
           <div className='flex items-center gap-2 text-sm'>
+            <Sun
+              className={`h-4 w-4 ${isDarkMode ? 'text-slate-400' : 'text-amber-500'}`}
+            />
             <span
               className={
                 isDarkMode ? 'text-slate-400' : 'text-slate-900 font-medium'
               }
             >
-              ☀️ Light
+              Light
             </span>
             <span className='text-slate-300'>|</span>
+            <Moon
+              className={`h-4 w-4 ${isDarkMode ? 'text-amber-500' : 'text-slate-400'}`}
+            />
             <span
               className={
                 isDarkMode ? 'text-slate-900 font-medium' : 'text-slate-400'
               }
             >
-              🌙 Dark
+              Dark
             </span>
           </div>
         </div>
@@ -150,23 +164,25 @@ const Settings = () => {
             <div className='grid grid-cols-2 gap-3'>
               <button
                 onClick={() => handleViewChange('dashboard')}
-                className={`rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all ${
+                className={`inline-flex items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all ${
                   defaultView === 'dashboard'
                     ? 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-amber-200'
                 }`}
               >
-                📊 Dashboard
+                <LayoutDashboard className='h-4 w-4' />
+                Dashboard
               </button>
               <button
                 onClick={() => handleViewChange('workspaces')}
-                className={`rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all ${
+                className={`inline-flex items-center justify-center gap-2 rounded-lg border-2 px-4 py-3 text-sm font-medium transition-all ${
                   defaultView === 'workspaces'
                     ? 'border-amber-500 bg-amber-50 text-amber-700'
                     : 'border-slate-200 bg-white text-slate-600 hover:border-amber-200'
                 }`}
               >
-                📋 Workspaces
+                <ClipboardList className='h-4 w-4' />
+                Workspaces
               </button>
             </div>
           </div>
@@ -199,7 +215,7 @@ const Settings = () => {
                          hover:shadow-lg hover:brightness-110 transition-all disabled:opacity-40
                          disabled:cursor-not-allowed'
             >
-              <span>📤</span>
+              <Upload className='h-4 w-4' />
               Export
             </button>
           </div>

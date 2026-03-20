@@ -5,6 +5,15 @@ import { fetchWorkspaces } from '../../reducers/workspace/workspace';
 import { selectWorkspaces } from '../../reducers/workspace/selectors';
 import NewWorkspaceModal from '../../components/modals/new-workspace-modal/NewWorkspaceModal';
 import { createWorkspace } from '../../reducers/workspace/workspace';
+import {
+  LayoutDashboard,
+  Sparkles,
+  TrendingUp,
+  Plus,
+  Rocket,
+  ClipboardList,
+  Settings,
+} from 'lucide-react';
 
 const DashboardHome = () => {
   const dispatch = useAppDispatch();
@@ -67,7 +76,7 @@ const DashboardHome = () => {
                      hover:shadow-lg hover:brightness-110 transition-all disabled:opacity-60'
           disabled={isLoading}
         >
-          <span className='text-lg leading-none'>＋</span>
+          <Plus className='h-4 w-4' />
           New workspace
         </button>
       </div>
@@ -79,8 +88,8 @@ const DashboardHome = () => {
           data-testid='stat-total-workspaces'
         >
           <div className='flex items-center gap-4'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-2xl'>
-              📊
+            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'>
+              <LayoutDashboard className='h-6 w-6' />
             </div>
             <div>
               <div className='text-2xl font-bold text-slate-900 dark:text-slate-100'>
@@ -95,8 +104,8 @@ const DashboardHome = () => {
 
         <div className='rounded-2xl border border-amber-100 dark:border-amber-900/30 bg-white dark:bg-slate-800 p-5 shadow-sm hover:shadow-md transition-shadow'>
           <div className='flex items-center gap-4'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-2xl'>
-              ✨
+            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'>
+              <Sparkles className='h-6 w-6' />
             </div>
             <div>
               <div className='text-2xl font-bold text-slate-900 dark:text-slate-100'>
@@ -111,8 +120,8 @@ const DashboardHome = () => {
 
         <div className='rounded-2xl border border-amber-100 dark:border-amber-900/30 bg-white dark:bg-slate-800 p-5 shadow-sm hover:shadow-md transition-shadow'>
           <div className='flex items-center gap-4'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-2xl'>
-              📈
+            <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'>
+              <TrendingUp className='h-6 w-6' />
             </div>
             <div>
               <div className='text-2xl font-bold text-slate-900 dark:text-slate-100'>
@@ -157,7 +166,7 @@ const DashboardHome = () => {
         {!isLoading && !isError && items.length === 0 && (
           <div className='flex flex-col items-center justify-center rounded-2xl border border-dashed border-amber-200 dark:border-amber-900/30 bg-white dark:bg-slate-800 py-16'>
             <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'>
-              <span className='text-4xl'>🚀</span>
+              <Rocket className='h-8 w-8' />
             </div>
             <h3 className='text-lg font-semibold text-slate-900 dark:text-slate-100'>
               No workspaces yet
@@ -172,7 +181,7 @@ const DashboardHome = () => {
                          bg-linear-to-r from-amber-500 to-amber-600 text-white shadow-md
                          hover:shadow-lg hover:brightness-110 transition-all'
             >
-              <span className='text-lg leading-none'>＋</span>
+              <Plus className='h-4 w-4' />
               Create Workspace
             </button>
           </div>
@@ -234,7 +243,7 @@ const DashboardHome = () => {
                        bg-white dark:bg-slate-800 p-6 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700
                        transition-all text-center'
           >
-            <span className='text-3xl'>📋</span>
+            <ClipboardList className='h-7 w-7 text-amber-500' />
             <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
               View All Workspaces
             </span>
@@ -246,7 +255,7 @@ const DashboardHome = () => {
                        bg-white dark:bg-slate-800 p-6 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700
                        transition-all text-center'
           >
-            <span className='text-3xl'>➕</span>
+            <Plus className='h-7 w-7 text-amber-500' />
             <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
               Create Workspace
             </span>
@@ -258,7 +267,7 @@ const DashboardHome = () => {
                        bg-white dark:bg-slate-800 p-6 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700
                        transition-all text-center'
           >
-            <span className='text-3xl'>⚙️</span>
+            <Settings className='h-7 w-7 text-amber-500' />
             <span className='text-sm font-medium text-slate-900 dark:text-slate-100'>
               Settings
             </span>
