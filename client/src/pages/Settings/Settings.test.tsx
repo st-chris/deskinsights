@@ -217,8 +217,8 @@ describe('Settings', () => {
     test('displays theme labels', () => {
       renderWithProviders(<Settings />);
 
-      expect(screen.getByText(/☀️ Light/i)).toBeInTheDocument();
-      expect(screen.getByText(/🌙 Dark/i)).toBeInTheDocument();
+      expect(screen.getByText('Light')).toBeInTheDocument();
+      expect(screen.getByText('Dark')).toBeInTheDocument();
     });
   });
 
@@ -227,10 +227,10 @@ describe('Settings', () => {
       renderWithProviders(<Settings />);
 
       expect(
-        screen.getByRole('button', { name: /📊 Dashboard/i }),
+        screen.getByRole('button', { name: /Dashboard/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('button', { name: /📋 Workspaces/i }),
+        screen.getByRole('button', { name: /Workspaces/i }),
       ).toBeInTheDocument();
     });
 
@@ -238,7 +238,7 @@ describe('Settings', () => {
       renderWithProviders(<Settings />);
 
       const workspacesButton = screen.getByRole('button', {
-        name: /📋 Workspaces/i,
+        name: /Workspaces/i,
       });
       fireEvent.click(workspacesButton);
 
@@ -259,7 +259,7 @@ describe('Settings', () => {
       renderWithProviders(<Settings />);
 
       const dashboardButton = screen.getByRole('button', {
-        name: /📊 Dashboard/i,
+        name: /Dashboard/i,
       });
       fireEvent.click(dashboardButton);
 
@@ -319,7 +319,7 @@ describe('Settings', () => {
       const store = createMockStore({ items: [] });
       renderWithProviders(<Settings />, { store });
 
-      const exportButton = screen.getByRole('button', { name: /📤 export/i });
+      const exportButton = screen.getByRole('button', { name: /export/i });
       expect(exportButton).toBeDisabled();
     });
 
@@ -335,7 +335,7 @@ describe('Settings', () => {
       const store = createMockStore({ items: mockWorkspaces });
       renderWithProviders(<Settings />, { store });
 
-      const exportButton = screen.getByRole('button', { name: /📤 export/i });
+      const exportButton = screen.getByRole('button', { name: /export/i });
       expect(exportButton).not.toBeDisabled();
     });
 
@@ -352,7 +352,7 @@ describe('Settings', () => {
       const store = createMockStore({ items: mockWorkspaces });
       renderWithProviders(<Settings />, { store });
 
-      const exportButton = screen.getByRole('button', { name: /📤 export/i });
+      const exportButton = screen.getByRole('button', { name: /export/i });
       fireEvent.click(exportButton);
       await waitFor(() =>
         expect(window.URL.createObjectURL).toHaveBeenCalled(),
