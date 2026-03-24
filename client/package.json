@@ -60,5 +60,13 @@
     "typescript-eslint": "8.34.1",
     "vite": "7.3.1",
     "vitest": "4.1.0"
+  },
+  "overrides": {
+    "@tiptap/core": "3.20.2",
+    "@tiptap/pm": "3.20.2",
+    "@tiptap/starter-kit": {
+      "@tiptap/core": "3.20.2",
+      "@tiptap/pm": "3.20.2"
+    }
   }
 }
